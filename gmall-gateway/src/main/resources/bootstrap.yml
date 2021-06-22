@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: gateway-api
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        namespace: ce272209-b78d-49a5-bb43-af51498affff
+        group: dev
+        file-extension: yml
