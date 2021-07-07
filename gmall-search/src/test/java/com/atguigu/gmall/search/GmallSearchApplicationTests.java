@@ -69,7 +69,7 @@ class GmallSearchApplicationTests {
 
                         goods.setSkuId(skuEntity.getId());
                         goods.setDefaultImage(skuEntity.getDefaultImage());
-                        goods.setSubTitle(skuEntity.getTitle());
+                        goods.setTitle(skuEntity.getTitle());
                         goods.setSubTitle(skuEntity.getSubtitle());
                         goods.setPrice(skuEntity.getPrice().doubleValue());
 

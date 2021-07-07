@@ -20,6 +20,22 @@ spring:
   elasticsearch:
     rest:
       uris: http://192.168.102.130:9200
+  jackson:
+    default-property-inclusion: non_null
+  thymeleaf:
+    cache: false
+  rabbitmq:
+    host: 192.168.102.130
+    port: 5672
+    virtual-host: /linyuan
+    username: linyuan
+    password: linyuan
+    listener:
+      type: simple
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
+        concurrency: 3
 feign:
   sentinel:
     enabled: true

@@ -28,6 +28,14 @@ spring:
   redis:
     host: 192.168.102.130
     port: 6379
+  rabbitmq:
+    host: 192.168.102.130
+    port: 5672
+    virtual-host: /linyuan
+    username: linyuan
+    password: linyuan
+    publisher-confirm-type: correlated
+    publisher-returns: true
 feign:
   sentinel:
     enabled: true
