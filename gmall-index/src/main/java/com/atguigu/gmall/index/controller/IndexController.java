@@ -33,4 +33,44 @@ public class IndexController {
         List<CategoryEntity> categoryEntities =  this.indexService.queryLvl2WithSubsByPid(pid);
         return ResponseVo.ok(categoryEntities);
     }
+
+
+    @ResponseBody
+    @GetMapping("index/test/lock")
+    public ResponseVo testLock(){
+        this.indexService.testLock();
+        return ResponseVo.ok();
+    }
+
+    @ResponseBody
+    @GetMapping("index/test/read")
+    public ResponseVo<String> read(){
+        String msg = indexService.readLock();
+
+        return ResponseVo.ok(msg);
+    }
+
+    @ResponseBody
+    @GetMapping("index/test/write")
+    public ResponseVo<String> write(){
+        String msg = indexService.writeLock();
+
+        return ResponseVo.ok(msg);
+    }
+
+    @ResponseBody
+    @GetMapping("index/test/latch")
+    public ResponseVo<String> latch(){
+        String msg = indexService.latch();
+
+        return ResponseVo.ok(msg);
+    }
+
+    @ResponseBody
+    @GetMapping("index/test/countDown")
+    public ResponseVo<String> countDown(){
+        String msg = indexService.countDown();
+
+        return ResponseVo.ok(msg);
+    }
 }

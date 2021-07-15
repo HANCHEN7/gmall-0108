@@ -2,6 +2,7 @@ package com.atguigu.gmall.pms.controller;
 
 import java.util.List;
 
+import com.atguigu.gmall.pms.vo.GroupVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,13 +36,23 @@ public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
 
+    @GetMapping("with/attr/value/{cid}")
+    public ResponseVo<List<GroupVo>> queryGroupWithAttrValueByCidAndSpuIdAndSkuId(
+            @PathVariable("cid")Long cid,
+            @RequestParam("spuId")Long spuId,
+            @RequestParam("skuId")Long skuId
+    ){
+        List<GroupVo> groupVos = this.attrGroupService.queryGroupWithAttrValueByCidAndSpuIdAndSkuId(cid,spuId,skuId);
+        return ResponseVo.ok(groupVos);
+    }
+
     @GetMapping("category/{cid}")
-    public ResponseVo<List<AttrGroupEntity>> queryAttrByCid(@PathVariable("cid") long cid){
+    public ResponseVo<List<AttrGroupEntity>> queryAttrByCid(@PathVariable("cid") Long cid){
         List<AttrGroupEntity> queryAttrByCid = attrGroupService.list(new QueryWrapper<AttrGroupEntity>().eq("category_id",cid));
 
         return ResponseVo.ok(queryAttrByCid);
     }
-    @GetMapping("withattrs/{catId}")
+    @GetMapping("/withattrs/{catId}")
     public ResponseVo<List<AttrGroupEntity>> queryWithAttrsByCid(@PathVariable("catId") long catId){
         List<AttrGroupEntity> queryWithAttrsByCid = attrGroupService.queryWithAttrsByCid(catId);
 

@@ -1,10 +1,15 @@
 package com.atguigu.gmall.pms.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.pms.entity.AttrEntity;
+import com.atguigu.gmall.pms.entity.SkuEntity;
 import com.atguigu.gmall.pms.mapper.AttrMapper;
+import com.atguigu.gmall.pms.mapper.SkuMapper;
+import com.atguigu.gmall.pms.vo.SaleAttrValueVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,6 +32,11 @@ public class SkuAttrValueServiceImpl extends ServiceImpl<SkuAttrValueMapper, Sku
     @Autowired
     private AttrMapper attrMapper;
 
+    @Autowired
+    private SkuMapper skuMapper;
+    @Autowired
+    private SkuAttrValueMapper attrValueMapper;
+
     @Override
     public PageResultVo queryPage(PageParamVo paramVo) {
         IPage<SkuAttrValueEntity> page = this.page(
@@ -46,6 +56,47 @@ public class SkuAttrValueServiceImpl extends ServiceImpl<SkuAttrValueMapper, Sku
 
         List<Long> attrIds = attrEntities.stream().map(AttrEntity::getId).collect(Collectors.toList());
         return this.list(new QueryWrapper<SkuAttrValueEntity>().eq("sku_id",skuId).in("attr_id",attrIds));
+
+    }
+
+    @Override
+    public List<SaleAttrValueVo> querySaleAttrValuesBySpuId(Long spuId) {
+        List<SkuEntity> skuEntities = this.skuMapper.selectList(new QueryWrapper<SkuEntity>().eq("spu_id", spuId));
+        if (CollectionUtils.isEmpty(skuEntities)){
+            return null;
+        }
+        List<Long> skuIds = skuEntities.stream().map(SkuEntity::getId).collect(Collectors.toList());
+        List<SkuAttrValueEntity> skuAttrValueEntities = this.list(new QueryWrapper<SkuAttrValueEntity>().in("sku_id", skuIds).orderByAsc("attr_id"));
+        if (CollectionUtils.isEmpty(skuAttrValueEntities)){
+            return null;
+        }
+
+        List<SaleAttrValueVo> saleAttrValueVos = new ArrayList<>();
+        Map<Long, List<SkuAttrValueEntity>> map = skuAttrValueEntities.stream().collect(Collectors.groupingBy(SkuAttrValueEntity::getAttrId));
+        map.forEach((attrId,skuAttrValueEntitylist) -> {
+            SaleAttrValueVo saleAttrValueVo = new SaleAttrValueVo();
+            saleAttrValueVo.setAttrId(attrId);
+            saleAttrValueVo.setAttrName(skuAttrValueEntitylist.get(0).getAttrName());
+            saleAttrValueVo.setAttrValues(skuAttrValueEntitylist.stream().map(SkuAttrValueEntity::getAttrValue).collect(Collectors.toSet()));
+            saleAttrValueVos.add(saleAttrValueVo);
+        });
+        return saleAttrValueVos;
+    }
+
+    @Override
+    public String queryMappingBySpuId(Long spuId) {
+
+        List<SkuEntity> skuEntities = this.skuMapper.selectList(new QueryWrapper<SkuEntity>().eq("spu_id",spuId));
+        if (CollectionUtils.isEmpty(skuEntities)){
+            return null;
+        }
+        List<Long> skuIds = skuEntities.stream().map(SkuEntity::getId).collect(Collectors.toList());
+        List<Map<String,Object>> maps = this.attrValueMapper.queryMappingBySpuId(skuIds);
+        if (CollectionUtils.isEmpty(maps)){
+            return null;
+        }
+        Map<String, Long> mapping = maps.stream().collect(Collectors.toMap(map -> map.get("attr_values").toString(), map -> (Long) map.get("sku_id")));
+        return JSON.toJSONString(mapping);
 
     }
 
