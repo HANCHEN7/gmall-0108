@@ -22,9 +22,6 @@ spring:
 feign:
   sentinel:
     enabled: true
-logging:
-  level:
-    com.atguigu.gmall: debug
 jwt:
   pubFilePath: D:\1130java\rsa\rsa.pub
   priFilePath: D:\1130java\rsa\rsa.pri
